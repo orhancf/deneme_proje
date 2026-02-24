@@ -1,0 +1,10 @@
+# SCM Architect Skill
+
+## Description
+Tedarik Zinciri Kontrol Kulesi projesine yeni S&OP ve IBP metrikleri eklemek için uzmanlaşmış bir yetenektir. Veritabanı, NestJS backend ve Next.js frontend katmanlarını eşzamanlı olarak uçtan uca günceller.
+
+## Context
+Bu proje veri odaklı bir İleri Planlama ve Çizelgeleme altyapısı sunar. Veritabanında karmaşık fact ve dimension tabloları bulunur. Yeni bir metrik eklendiğinde SQL görünümlerinin, NestJS servislerinin ve React bileşenlerinin tamamen senkronize bir şekilde çalışması şarttır. 
+
+## Instructions
+Görevine daima docs/KPI_CATALOG.md dosyasını okuyarak mevcut metriklerin yapısını anlayarak başla. Veritabanı katmanı için db/init/ dizinindeki uygun SQL dosyasına yeni metriğin hesaplama mantığını eklemen gerekiyor. Ardından backend katmanında backend/src/metrics/ dizinindeki dosyaları güncelleyerek bu yeni metriği API üzerinden sunmalısın. Son olarak frontend katmanında frontend/src/components/ altındaki ilgili dashboard bileşenlerini düzenleyerek veriyi kullanıcı arayüzüne yansıtmalısın. Tüm bu adımları gerçekleştirirken SCOR modeli standartlarına ve projenin genel mimarisine sadık kalmaya özen göster.
