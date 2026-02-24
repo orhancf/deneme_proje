@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.next/
+.env
+.env.local
+coverage/
+*.log
+test-output.txt
+jest_results*.json
+.DS_Store
+Thumbs.db

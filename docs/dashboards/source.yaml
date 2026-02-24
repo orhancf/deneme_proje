@@ -1,0 +1,62 @@
+dashboard:
+  id: source
+  title: Source (Procurement)
+  description: Supplier performance KPIs
+  route: /source
+  layout: grid
+  refresh_interval_sec: 300
+
+tiles:
+  - id: supot_tile
+    type: kpi_tile
+    kpi_id: SUPOT_013
+    label: Supplier OT %
+    position: { row: 1, col: 1, span: 1 }
+    thresholds:
+      green: ">= 0.95"
+      yellow: ">= 0.90"
+      red: "< 0.90"
+
+  - id: ltvar_tile
+    type: kpi_tile
+    kpi_id: LTVAR_014
+    label: Lead Time Variance
+    position: { row: 1, col: 2, span: 1 }
+
+  - id: supppm_tile
+    type: kpi_tile
+    kpi_id: SUPPPM_015
+    label: Supplier Quality PPM
+    position: { row: 1, col: 3, span: 1 }
+
+charts:
+  - id: supplier_ot_trend
+    type: line_chart
+    title: Supplier OT % Trend
+    kpi_id: SUPOT_013
+    value_column: supplier_ot_pct
+    time_column: po_date
+    grain: week
+    position: { row: 2, col: 1, span: 2 }
+
+  - id: lt_variance_by_supplier
+    type: bar_chart
+    title: Lead Time Variance by Supplier
+    kpi_id: LTVAR_014
+    group_by: supplier_name
+    value_column: avg_lead_time_variance
+    position: { row: 2, col: 3, span: 2 }
+
+tables:
+  - id: supplier_scorecard
+    type: data_table
+    title: Supplier Scorecard
+    kpi_id: SUPOT_013
+    columns:
+      - { key: supplier_name, label: Supplier }
+      - { key: supplier_ot_pct, label: OT %, format: percent }
+      - { key: avg_lead_time_variance, label: LT Var (days) }
+      - { key: avg_quality_ppm, label: PPM }
+      - { key: total_po_lines, label: PO Lines }
+    position: { row: 3, col: 1, span: 4 }
+    exportable: true

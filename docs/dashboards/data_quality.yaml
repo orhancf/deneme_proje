@@ -1,0 +1,54 @@
+dashboard:
+  id: data_quality
+  title: Data Quality
+  description: Data freshness, completeness, and reconciliation checks
+  route: /data-quality
+  layout: grid
+  refresh_interval_sec: 600
+
+tiles:
+  - id: freshness_status
+    type: status_tile
+    label: Data Freshness
+    data_source: /api/health/freshness
+    position: { row: 1, col: 1, span: 1 }
+    thresholds:
+      green: "all tables within SLA"
+      red: "any table breaches SLA"
+
+  - id: completeness_status
+    type: status_tile
+    label: Completeness
+    data_source: /api/health/quality
+    position: { row: 1, col: 2, span: 1 }
+
+  - id: reconciliation_status
+    type: status_tile
+    label: Reconciliation
+    data_source: /api/health/quality
+    position: { row: 1, col: 3, span: 1 }
+
+tables:
+  - id: freshness_detail
+    type: data_table
+    title: Freshness by Table
+    data_source: /api/health/freshness
+    columns:
+      - { key: table_name, label: Table }
+      - { key: last_load, label: Last Load }
+      - { key: sla_hours, label: SLA (hours) }
+      - { key: hours_since, label: Hours Since }
+      - { key: status, label: Status }
+    position: { row: 2, col: 1, span: 4 }
+
+  - id: quality_checks
+    type: data_table
+    title: Quality Check Results
+    data_source: /api/health/quality
+    columns:
+      - { key: check_name, label: Check }
+      - { key: check_type, label: Type }
+      - { key: status, label: Status }
+      - { key: details, label: Details }
+      - { key: checked_at, label: Checked At }
+    position: { row: 3, col: 1, span: 4 }

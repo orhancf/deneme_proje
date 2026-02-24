@@ -1,0 +1,62 @@
+dashboard:
+  id: deliver
+  title: Deliver (Logistics)
+  description: Logistics and transportation KPIs
+  route: /deliver
+  layout: grid
+  refresh_interval_sec: 300
+
+tiles:
+  - id: frcost_tile
+    type: kpi_tile
+    kpi_id: FRCOST_016
+    label: Freight Cost/Unit
+    position: { row: 1, col: 1, span: 1 }
+
+  - id: ttvar_tile
+    type: kpi_tile
+    kpi_id: TTVAR_017
+    label: Transit Time Variance
+    position: { row: 1, col: 2, span: 1 }
+
+  - id: carot_tile
+    type: kpi_tile
+    kpi_id: CAROT_018
+    label: Carrier OT %
+    position: { row: 1, col: 3, span: 1 }
+    thresholds:
+      green: ">= 0.95"
+      yellow: ">= 0.90"
+      red: "< 0.90"
+
+charts:
+  - id: freight_cost_trend
+    type: line_chart
+    title: Freight Cost/Unit Trend
+    kpi_id: FRCOST_016
+    value_column: freight_cost_per_unit
+    time_column: ship_date
+    grain: week
+    position: { row: 2, col: 1, span: 2 }
+
+  - id: carrier_ot_by_carrier
+    type: bar_chart
+    title: Carrier OT % by Carrier
+    kpi_id: CAROT_018
+    group_by: carrier_name
+    value_column: carrier_ot_pct
+    position: { row: 2, col: 3, span: 2 }
+
+tables:
+  - id: lane_performance
+    type: data_table
+    title: Lane Performance
+    kpi_id: FRCOST_016
+    columns:
+      - { key: lane_name, label: Lane }
+      - { key: carrier_name, label: Carrier }
+      - { key: freight_cost_per_unit, label: Cost/Unit, format: currency }
+      - { key: avg_transit_variance, label: Transit Var (days) }
+      - { key: carrier_ot_pct, label: OT %, format: percent }
+    position: { row: 3, col: 1, span: 4 }
+    exportable: true

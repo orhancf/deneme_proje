@@ -1,0 +1,68 @@
+dashboard:
+  id: inventory
+  title: Inventory
+  description: Inventory health metrics — DOH, Turns, Stockout, E&O
+  route: /inventory
+  layout: grid
+  refresh_interval_sec: 300
+
+tiles:
+  - id: doh_tile
+    type: kpi_tile
+    kpi_id: DOH_005
+    label: Days on Hand
+    position: { row: 1, col: 1, span: 1 }
+    thresholds:
+      green: "<= 45"
+      yellow: "<= 60"
+      red: "> 60"
+
+  - id: turns_tile
+    type: kpi_tile
+    kpi_id: TURNS_006
+    label: Inventory Turns
+    position: { row: 1, col: 2, span: 1 }
+
+  - id: stockout_tile
+    type: kpi_tile
+    kpi_id: STOCKOUT_007
+    label: Stockout Rate
+    position: { row: 1, col: 3, span: 1 }
+
+  - id: eo_tile
+    type: kpi_tile
+    kpi_id: EO_008
+    label: Excess & Obsolete
+    position: { row: 1, col: 4, span: 1 }
+
+charts:
+  - id: doh_trend
+    type: line_chart
+    title: DOH Trend (90d)
+    kpi_id: DOH_005
+    value_column: days_on_hand
+    time_column: snapshot_date
+    grain: day
+    position: { row: 2, col: 1, span: 2 }
+
+  - id: aging_breakdown
+    type: bar_chart
+    title: Inventory Aging Breakdown
+    kpi_id: DOH_005
+    group_by: age_bucket
+    value_column: inventory_value
+    position: { row: 2, col: 3, span: 2 }
+
+tables:
+  - id: site_inventory
+    type: data_table
+    title: Site-Level Inventory
+    kpi_id: DOH_005
+    columns:
+      - { key: org_name, label: Site }
+      - { key: sku_count, label: SKUs }
+      - { key: avg_doh, label: Avg DOH }
+      - { key: stockout_rate, label: Stockout % }
+      - { key: total_inventory_value, label: Inventory Value, format: currency }
+    position: { row: 3, col: 1, span: 4 }
+    exportable: true

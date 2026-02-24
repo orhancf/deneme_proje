@@ -1,0 +1,62 @@
+dashboard:
+  id: plan
+  title: Plan
+  description: Demand planning KPIs — Forecast Accuracy, Bias, Backlog
+  route: /plan
+  layout: grid
+  refresh_interval_sec: 300
+
+tiles:
+  - id: fcacc_tile
+    type: kpi_tile
+    kpi_id: FCACC_009
+    label: Forecast Accuracy
+    position: { row: 1, col: 1, span: 1 }
+    thresholds:
+      green: ">= 0.80"
+      yellow: ">= 0.70"
+      red: "< 0.70"
+
+  - id: fcbias_tile
+    type: kpi_tile
+    kpi_id: FCBIAS_010
+    label: Forecast Bias
+    position: { row: 1, col: 2, span: 1 }
+
+  - id: backlog_tile
+    type: kpi_tile
+    kpi_id: BACKLOG_004
+    label: Open Backlog
+    position: { row: 1, col: 3, span: 1 }
+
+charts:
+  - id: fc_accuracy_trend
+    type: line_chart
+    title: Forecast Accuracy Trend
+    kpi_id: FCACC_009
+    value_column: pct_error
+    time_column: forecast_date
+    grain: week
+    position: { row: 2, col: 1, span: 2 }
+
+  - id: fc_bias_trend
+    type: bar_chart
+    title: Forecast Bias by Product Family
+    kpi_id: FCBIAS_010
+    group_by: product_family
+    value_column: bias
+    position: { row: 2, col: 3, span: 2 }
+
+tables:
+  - id: backlog_detail
+    type: data_table
+    title: Backlog Detail
+    kpi_id: BACKLOG_004
+    columns:
+      - { key: org_name, label: Site }
+      - { key: product_family, label: Product Family }
+      - { key: backlog_qty, label: Backlog Qty }
+      - { key: backlog_value, label: Value, format: currency }
+      - { key: oldest_order_date, label: Oldest Order }
+    position: { row: 3, col: 1, span: 4 }
+    exportable: true

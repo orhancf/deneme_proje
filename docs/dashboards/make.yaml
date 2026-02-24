@@ -1,0 +1,57 @@
+dashboard:
+  id: make
+  title: Make (Production)
+  description: Production performance KPIs
+  route: /make
+  layout: grid
+  refresh_interval_sec: 300
+
+tiles:
+  - id: schedadh_tile
+    type: kpi_tile
+    kpi_id: SCHEDADH_011
+    label: Schedule Adherence
+    position: { row: 1, col: 1, span: 1 }
+    thresholds:
+      green: ">= 0.95"
+      yellow: ">= 0.85"
+      red: "< 0.85"
+
+  - id: caputil_tile
+    type: kpi_tile
+    kpi_id: CAPUTIL_012
+    label: Capacity Utilization
+    position: { row: 1, col: 2, span: 1 }
+
+charts:
+  - id: sched_trend
+    type: line_chart
+    title: Schedule Adherence Trend
+    kpi_id: SCHEDADH_011
+    value_column: schedule_adherence
+    time_column: production_date
+    grain: day
+    position: { row: 2, col: 1, span: 2 }
+
+  - id: cap_util_by_site
+    type: bar_chart
+    title: Capacity by Site
+    kpi_id: CAPUTIL_012
+    group_by: org_name
+    value_column: capacity_utilization
+    position: { row: 2, col: 3, span: 2 }
+
+tables:
+  - id: production_detail
+    type: data_table
+    title: Production Detail
+    kpi_id: SCHEDADH_011
+    columns:
+      - { key: org_name, label: Site }
+      - { key: product_family, label: Product Family }
+      - { key: planned_qty, label: Planned }
+      - { key: actual_qty, label: Actual }
+      - { key: schedule_adherence, label: Adherence %, format: percent }
+      - { key: capacity_utilization, label: Cap Util %, format: percent }
+    position: { row: 3, col: 1, span: 4 }
+    exportable: true

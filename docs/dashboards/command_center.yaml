@@ -1,0 +1,90 @@
+dashboard:
+  id: command_center
+  title: Command Center
+  description: Executive overview of all supply chain KPIs
+  route: /
+  layout: grid
+  refresh_interval_sec: 300
+
+tiles:
+  - id: otif_tile
+    type: kpi_tile
+    kpi_id: OTIF_001
+    label: OTIF %
+    position: { row: 1, col: 1, span: 1 }
+    thresholds:
+      green: ">= 0.95"
+      yellow: ">= 0.90"
+      red: "< 0.90"
+
+  - id: otd_tile
+    type: kpi_tile
+    kpi_id: OTD_002
+    label: OTD %
+    position: { row: 1, col: 2, span: 1 }
+
+  - id: fill_rate_tile
+    type: kpi_tile
+    kpi_id: FILL_003
+    label: Fill Rate %
+    position: { row: 1, col: 3, span: 1 }
+
+  - id: backlog_tile
+    type: kpi_tile
+    kpi_id: BACKLOG_004
+    label: Open Backlog
+    position: { row: 1, col: 4, span: 1 }
+
+  - id: doh_tile
+    type: kpi_tile
+    kpi_id: DOH_005
+    label: Days on Hand
+    position: { row: 2, col: 1, span: 1 }
+
+  - id: sched_adh_tile
+    type: kpi_tile
+    kpi_id: SCHEDADH_011
+    label: Schedule Adherence
+    position: { row: 2, col: 2, span: 1 }
+
+  - id: supplier_ot_tile
+    type: kpi_tile
+    kpi_id: SUPOT_013
+    label: Supplier OT %
+    position: { row: 2, col: 3, span: 1 }
+
+  - id: freight_tile
+    type: kpi_tile
+    kpi_id: FRCOST_016
+    label: Freight Cost/Unit
+    position: { row: 2, col: 4, span: 1 }
+
+charts:
+  - id: otif_trend
+    type: line_chart
+    title: OTIF Trend (30d)
+    kpi_id: OTIF_001
+    value_column: otif_pct
+    time_column: order_date
+    grain: day
+    position: { row: 3, col: 1, span: 2 }
+
+  - id: fill_rate_trend
+    type: area_chart
+    title: Fill Rate Trend
+    kpi_id: FILL_003
+    value_column: fill_rate_pct
+    time_column: order_date
+    grain: week
+    position: { row: 3, col: 3, span: 2 }
+
+tables:
+  - id: exception_feed
+    type: exception_table
+    title: Recent Exceptions
+    query: |
+      SELECT kpi_id, org_name, value, threshold, severity, detected_at
+      FROM app.kpi_exceptions
+      ORDER BY detected_at DESC
+      LIMIT 20
+    position: { row: 4, col: 1, span: 4 }
