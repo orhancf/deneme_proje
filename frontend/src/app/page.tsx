@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { DrillDownDrawer } from '@/components/DrillDownDrawer';
 import { exportToCsv } from '@/lib/export';
 
-// Demo data for charts (used when API is not yet connected)
+// Demo data for charts
 const otifTrend = [
   { week: 'W1', otif: 93.2, otd: 94.1, fill: 96.5 },
   { week: 'W2', otif: 91.8, otd: 93.5, fill: 95.8 },
@@ -74,7 +74,6 @@ export default function CommandCenter() {
   };
 
   const handleDrillDown = (title: string) => {
-    // Generate some mock detail rows based on the title
     const mockDetails = Array.from({ length: 15 }).map((_, i) => ({
       id: `ORD-${1000 + i}`,
       date: new Date(Date.now() - i * 86400000).toISOString().split('T')[0],
@@ -108,15 +107,32 @@ export default function CommandCenter() {
         data={drillData.data}
         columns={drillData.columns}
       />
+
       {/* Header */}
-      <div className="top-bar">
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        marginBottom: 'var(--space-8)',
+      }}>
         <div>
-          <h2>Command Center</h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: 14, margin: '4px 0 0' }}>
+          <h2 style={{
+            fontSize: 'var(--text-2xl)',
+            fontWeight: 700,
+            letterSpacing: '-0.02em',
+            margin: 0,
+          }}>
+            Command Center
+          </h2>
+          <p style={{
+            color: 'var(--text-secondary)',
+            fontSize: 'var(--text-base)',
+            margin: 'var(--space-1) 0 0',
+          }}>
             Real-time supply chain performance overview
           </p>
         </div>
-        <div className="filters">
+        <div style={{ display: 'flex', gap: 'var(--space-2)', alignItems: 'center' }}>
           <select className="filter-select">
             <option>Last 30 Days</option>
             <option>Last 7 Days</option>
@@ -129,13 +145,13 @@ export default function CommandCenter() {
             <option>EuroTech Industries</option>
           </select>
           <button className="btn btn-secondary" onClick={handleExportSummary}>
-            ⬇ Export Summary
+            ⬇ Export
           </button>
         </div>
       </div>
 
-      {/* KPI Tiles */}
-      <div className="kpi-grid">
+      {/* KPI Tiles — Staggered Animation */}
+      <div className="kpi-grid stagger-in">
         <KpiTile label="OTIF %" value="94.2" unit="%" delta={1.3} target={95} status="yellow" onClick={() => handleDrillDown('OTIF %')} />
         <KpiTile label="OTD %" value="95.1" unit="%" delta={0.8} target={95} status="green" onClick={() => handleDrillDown('OTD %')} />
         <KpiTile label="Fill Rate %" value="97.0" unit="%" delta={0.5} target={98} status="yellow" onClick={() => handleDrillDown('Fill Rate %')} />
@@ -146,81 +162,131 @@ export default function CommandCenter() {
         <KpiTile label="Freight Cost/Unit" value="$8.42" delta={-4.1} status="green" onClick={() => handleDrillDown('Freight Cost/Unit')} />
       </div>
 
-      {/* Charts */}
-      <div className="chart-grid">
-        <ChartCard
-          title="OTIF / OTD / Fill Rate Trend"
-          type="line"
-          data={otifTrend}
-          xKey="week"
-          dataKeys={[
-            { key: 'otif', color: '#3b82f6', name: 'OTIF %' },
-            { key: 'otd', color: '#06b6d4', name: 'OTD %' },
-            { key: 'fill', color: '#10b981', name: 'Fill Rate %' },
-          ]}
-        />
-        <ChartCard
-          title="Backlog by Organization"
-          type="bar"
-          data={backlogByOrg}
-          xKey="org"
-          dataKeys={[
-            { key: 'backlog', color: '#f59e0b', name: 'Backlog (qty)' },
-          ]}
-        />
-        <ChartCard
-          title="Inventory Metrics Trend"
-          type="area"
-          data={inventoryTrend}
-          xKey="month"
-          dataKeys={[
-            { key: 'doh', color: '#8b5cf6', name: 'Days on Hand' },
-          ]}
-        />
-        <ChartCard
-          title="Stockout Rate Trend"
-          type="line"
-          data={inventoryTrend}
-          xKey="month"
-          dataKeys={[
-            { key: 'stockout', color: '#ef4444', name: 'Stockout Rate %' },
-          ]}
-        />
+      {/* Charts — Bento Grid */}
+      <div className="bento-grid">
+        <div className="col-span-7">
+          <ChartCard
+            title="OTIF / OTD / Fill Rate Trend"
+            type="line"
+            data={otifTrend}
+            xKey="week"
+            dataKeys={[
+              { key: 'otif', color: 'var(--chart-1)', name: 'OTIF %' },
+              { key: 'otd', color: 'var(--chart-2)', name: 'OTD %' },
+              { key: 'fill', color: 'var(--chart-3)', name: 'Fill Rate %' },
+            ]}
+          />
+        </div>
+        <div className="col-span-5">
+          <ChartCard
+            title="Backlog by Organization"
+            type="bar"
+            data={backlogByOrg}
+            xKey="org"
+            dataKeys={[
+              { key: 'backlog', color: 'var(--chart-5)', name: 'Backlog (qty)' },
+            ]}
+          />
+        </div>
+        <div className="col-span-6">
+          <ChartCard
+            title="Inventory Metrics Trend"
+            type="area"
+            data={inventoryTrend}
+            xKey="month"
+            dataKeys={[
+              { key: 'doh', color: 'var(--chart-4)', name: 'Days on Hand' },
+            ]}
+          />
+        </div>
+        <div className="col-span-6">
+          <ChartCard
+            title="Stockout Rate Trend"
+            type="line"
+            data={inventoryTrend}
+            xKey="month"
+            dataKeys={[
+              { key: 'stockout', color: 'var(--chart-1)', name: 'Stockout Rate %' },
+            ]}
+            height={280}
+          />
+        </div>
       </div>
 
-      {/* Exception Feed */}
-      <div className="exception-feed">
-        <h3 style={{ fontSize: 15, fontWeight: 600, margin: '0 0 16px' }}>
-          ⚠️ Exception Feed — Top Alerts
-        </h3>
-        {exceptions.map((ex, i) => (
-          <div key={i} className="exception-item">
-            <div className={`exception-dot ${ex.severity}`} />
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 13, color: 'var(--text-primary)' }}>{ex.message}</div>
-              <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 4 }}>{ex.time}</div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Data Freshness Banner */}
-      {freshness && (
-        <div className="card" style={{ marginTop: 20 }}>
-          <h3 style={{ fontSize: 15, fontWeight: 600, margin: '0 0 12px' }}>📡 Data Freshness</h3>
-          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-            {freshness.map((f) => (
-              <div key={f.table_name} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span className={`badge badge-${f.sla_status.toLowerCase()}`}>{f.sla_status}</span>
-                <span style={{ fontSize: 13 }}>{f.table_name}</span>
-                <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>
-                  ({f.row_count.toLocaleString()} rows, {f.hours_since_load}h ago)
-                </span>
+      {/* Exception Feed + Data Freshness — Bento */}
+      <div className="bento-grid">
+        <div className="col-span-8">
+          <div className="exception-feed">
+            <h3 style={{
+              fontSize: 'var(--text-md)',
+              fontWeight: 600,
+              margin: '0 0 var(--space-4)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 'var(--space-2)',
+            }}>
+              <span style={{
+                width: 8,
+                height: 8,
+                borderRadius: '50%',
+                background: 'var(--color-danger)',
+                boxShadow: '0 0 8px var(--color-danger)',
+                display: 'inline-block',
+              }} />
+              Exception Feed — Top Alerts
+            </h3>
+            {exceptions.map((ex, i) => (
+              <div key={i} className="exception-item">
+                <div className={`exception-dot ${ex.severity}`} />
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 'var(--text-sm)', color: 'var(--text-primary)' }}>{ex.message}</div>
+                  <div style={{ fontSize: 'var(--text-xs)', color: 'var(--text-tertiary)', marginTop: 'var(--space-1)' }}>{ex.time}</div>
+                </div>
               </div>
             ))}
           </div>
         </div>
-      )}
+
+        <div className="col-span-4">
+          {/* Data Freshness */}
+          <div className="card" style={{ height: '100%' }}>
+            <h3 style={{
+              fontSize: 'var(--text-md)',
+              fontWeight: 600,
+              margin: '0 0 var(--space-4)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 'var(--space-2)',
+            }}>
+              📡 Data Freshness
+            </h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+              {freshness ? freshness.map((f) => (
+                <div key={f.table_name} style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 'var(--space-2)',
+                  padding: 'var(--space-2)',
+                  borderRadius: 'var(--radius-sm)',
+                  background: 'var(--bg-surface)',
+                }}>
+                  <span className={`status-pill ${f.sla_status.toLowerCase()}`}>{f.sla_status}</span>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 'var(--text-sm)', fontWeight: 500 }}>{f.table_name}</div>
+                    <div style={{ fontSize: 'var(--text-xs)', color: 'var(--text-tertiary)' }}>
+                      {f.row_count.toLocaleString()} rows • {f.hours_since_load}h ago
+                    </div>
+                  </div>
+                </div>
+              )) : (
+                <div style={{ color: 'var(--text-tertiary)', fontSize: 'var(--text-sm)' }}>
+                  Waiting for data...
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

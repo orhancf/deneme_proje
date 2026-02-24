@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
+import { useState } from 'react';
 import {
     LayoutDashboard,
     TrendingUp,
@@ -15,6 +16,8 @@ import {
     Activity,
     LogOut,
     UserCircle,
+    ChevronLeft,
+    ChevronRight,
 } from 'lucide-react';
 
 const navItems = [
@@ -35,57 +38,147 @@ const systemItems = [
 export function Sidebar() {
     const pathname = usePathname();
     const { data: session } = useSession();
+    const [collapsed, setCollapsed] = useState(false);
 
     return (
-        <aside className="sidebar">
+        <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
+            {/* Logo */}
             <div className="sidebar-logo">
-                <h1>⚡ Control Tower</h1>
-                <p>Supply Chain Analytics</p>
+                <span style={{ fontSize: 22, flexShrink: 0 }}>⚡</span>
+                {!collapsed && (
+                    <div>
+                        <h1>Control Tower</h1>
+                        <p>Supply Chain Analytics</p>
+                    </div>
+                )}
             </div>
 
+            {/* Nav */}
             <nav className="sidebar-nav">
-                <div className="sidebar-section-title">Dashboards</div>
+                <div className="sidebar-section-title">
+                    {collapsed ? '•••' : 'Dashboards'}
+                </div>
                 {navItems.map((item) => {
                     const Icon = item.icon;
                     const isActive = pathname === item.href;
                     return (
-                        <Link key={item.href} href={item.href} className={isActive ? 'active' : ''}>
-                            <Icon size={18} />
-                            {item.label}
+                        <Link
+                            key={item.href}
+                            href={item.href}
+                            className={isActive ? 'active' : ''}
+                            title={collapsed ? item.label : undefined}
+                            style={collapsed ? { justifyContent: 'center', padding: 'var(--space-2)' } : undefined}
+                        >
+                            <Icon size={18} style={{ flexShrink: 0 }} />
+                            {!collapsed && item.label}
                         </Link>
                     );
                 })}
 
-                <div className="sidebar-section-title">System</div>
+                <div className="sidebar-section-title">
+                    {collapsed ? '•••' : 'System'}
+                </div>
                 {systemItems.map((item) => {
                     const Icon = item.icon;
                     const isActive = pathname === item.href;
                     return (
-                        <Link key={item.href} href={item.href} className={isActive ? 'active' : ''}>
-                            <Icon size={18} />
-                            {item.label}
+                        <Link
+                            key={item.href}
+                            href={item.href}
+                            className={isActive ? 'active' : ''}
+                            title={collapsed ? item.label : undefined}
+                            style={collapsed ? { justifyContent: 'center', padding: 'var(--space-2)' } : undefined}
+                        >
+                            <Icon size={18} style={{ flexShrink: 0 }} />
+                            {!collapsed && item.label}
                         </Link>
                     );
                 })}
             </nav>
 
+            {/* Collapse Toggle */}
+            <button
+                onClick={() => setCollapsed((c) => !c)}
+                className="btn btn-ghost"
+                style={{
+                    margin: 'var(--space-2) var(--space-3)',
+                    borderRadius: 'var(--radius-sm)',
+                    justifyContent: 'center',
+                }}
+                aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            >
+                {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+                {!collapsed && <span style={{ fontSize: 'var(--text-sm)' }}>Collapse</span>}
+            </button>
+
             {/* User Profile */}
             {session?.user && (
-                <div className="mt-auto p-4 border-t border-[rgba(255,255,255,0.05)] bg-[#111827]">
-                    <div className="flex items-center gap-3 mb-4">
-                        <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400">
-                            <UserCircle size={20} />
+                <div
+                    style={{
+                        padding: collapsed ? 'var(--space-3)' : 'var(--space-4)',
+                        borderTop: '1px solid var(--border-default)',
+                        background: 'var(--bg-secondary)',
+                    }}
+                >
+                    {!collapsed && (
+                        <div
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 'var(--space-3)',
+                                marginBottom: 'var(--space-3)',
+                            }}
+                        >
+                            <div
+                                style={{
+                                    width: 32,
+                                    height: 32,
+                                    borderRadius: 'var(--radius-full)',
+                                    background: 'rgba(59, 130, 246, 0.15)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: 'var(--accent-primary)',
+                                    flexShrink: 0,
+                                }}
+                            >
+                                <UserCircle size={20} />
+                            </div>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                                <div style={{
+                                    fontSize: 'var(--text-sm)',
+                                    fontWeight: 500,
+                                    color: 'var(--text-primary)',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap',
+                                }}>
+                                    {session.user.name}
+                                </div>
+                                <div style={{
+                                    fontSize: 'var(--text-xs)',
+                                    color: 'var(--text-tertiary)',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap',
+                                }}>
+                                    {session.user.email}
+                                </div>
+                            </div>
                         </div>
-                        <div className="flex-1 min-w-0">
-                            <div className="text-sm font-medium text-white truncate">{session.user.name}</div>
-                            <div className="text-xs text-gray-500 truncate">{session.user.email}</div>
-                        </div>
-                    </div>
+                    )}
                     <button
                         onClick={() => signOut({ callbackUrl: '/login' })}
-                        className="w-full flex items-center justify-center gap-2 py-2 px-3 text-xs font-medium text-red-400 hover:bg-red-500/10 rounded transition-colors border border-transparent hover:border-red-500/20"
+                        className="btn btn-danger"
+                        style={{
+                            width: '100%',
+                            fontSize: 'var(--text-xs)',
+                            padding: 'var(--space-2)',
+                            justifyContent: 'center',
+                        }}
                     >
-                        <LogOut size={14} /> Sign Out
+                        <LogOut size={14} />
+                        {!collapsed && 'Sign Out'}
                     </button>
                 </div>
             )}
